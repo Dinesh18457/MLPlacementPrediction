@@ -1,0 +1,234 @@
+{% extends "base.html" %}
+
+
+{% block title %}
+
+Load Data - ML Dataset Dashboard
+
+{% endblock %}
+
+
+{% block content %}
+
+
+<div class="card">
+
+    <h2>
+        Data Loading & Cleaning
+    </h2>
+
+    <p>
+        Load and inspect the Placement Prediction dataset.
+    </p>
+
+</div>
+
+
+<div class="dataset-info">
+
+
+    <div class="card">
+
+        <h2>
+            Raw Dataset
+        </h2>
+
+        <p>
+            Rows:
+            <strong>
+                {{ shape[0] }}
+            </strong>
+        </p>
+
+        <p>
+            Columns:
+            <strong>
+                {{ shape[1] }}
+            </strong>
+        </p>
+
+    </div>
+
+
+    <div class="card">
+
+        <h2>
+            Cleaned Dataset
+        </h2>
+
+        <p>
+            Dataset after handling missing values.
+        </p>
+
+        <p>
+            Rows:
+            <strong>
+                {{ cleaned_shape[0] }}
+            </strong>
+        </p>
+
+        <p>
+            Columns:
+            <strong>
+                {{ cleaned_shape[1] }}
+            </strong>
+        </p>
+
+    </div>
+
+
+    <div class="card">
+
+        <h2>
+            Dataset Information
+        </h2>
+
+        <p>
+            Placement Prediction Dataset
+        </p>
+
+        <p>
+            50,000 student records
+        </p>
+
+    </div>
+
+
+</div>
+
+
+<div class="card">
+
+    <h2>
+        Dataset Columns
+    </h2>
+
+
+    <div class="columns">
+
+        {% for column in columns %}
+
+        <span class="column">
+
+            {{ column }}
+
+        </span>
+
+        {% endfor %}
+
+    </div>
+
+</div>
+
+
+<div class="card">
+
+    <h2>
+        Dataset Preview
+    </h2>
+
+
+    <div class="info-box">
+
+        <table>
+
+            <thead>
+
+                <tr>
+
+                    {% for column in columns %}
+
+                    <th>
+                        {{ column }}
+                    </th>
+
+                    {% endfor %}
+
+                </tr>
+
+            </thead>
+
+
+            <tbody>
+
+                {% for row in preview %}
+
+                <tr>
+
+                    {% for column in columns %}
+
+                    <td>
+                        {{ row[column] }}
+                    </td>
+
+                    {% endfor %}
+
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+
+<div class="card">
+
+    <h2>
+        Cleaned Dataset Preview
+    </h2>
+
+
+    <div class="info-box">
+
+        <table>
+
+            <thead>
+
+                <tr>
+
+                    {% for column in columns %}
+
+                    <th>
+                        {{ column }}
+                    </th>
+
+                    {% endfor %}
+
+                </tr>
+
+            </thead>
+
+
+            <tbody>
+
+                {% for row in cleaned_preview %}
+
+                <tr>
+
+                    {% for column in columns %}
+
+                    <td>
+                        {{ row[column] }}
+                    </td>
+
+                    {% endfor %}
+
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+
+{% endblock %}

@@ -1,0 +1,530 @@
+{% extends "base.html" %}
+
+
+{% block title %}
+
+Regression Analysis
+
+{% endblock %}
+
+
+{% block content %}
+
+
+<div class="card">
+
+    <h2>
+        Regression Analysis
+    </h2>
+
+    <p>
+        Simple Linear Regression, Simple Logistic Regression,
+        and multi-model regression on the Placement Prediction dataset.
+    </p>
+
+</div>
+
+
+<div class="card">
+
+    <h2>
+        1. Simple Linear Regression
+    </h2>
+
+    <p>
+        Predicting
+        <strong>
+            {{ linear.target }}
+        </strong>
+        from a single feature
+        <strong>
+            {{ linear.feature }}
+        </strong>
+        (
+        {{ linear.samples }}
+        samples after dropping missing target rows
+        ).
+    </p>
+
+    <div class="dataset-info">
+
+        <div class="info-box">
+
+            <h3>
+                {{ linear.mse }}
+            </h3>
+
+            <p>
+                MSE
+            </p>
+
+        </div>
+
+        <div class="info-box">
+
+            <h3>
+                {{ linear.rsq }}
+            </h3>
+
+            <p>
+                R&sup2;
+            </p>
+
+        </div>
+
+        <div class="info-box">
+
+            <h3>
+                {{ linear.samples }}
+            </h3>
+
+            <p>
+                Samples Used
+            </p>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<div class="card">
+
+    <h2>
+        2. Simple Linear Regression &mdash; Gradient Descent
+    </h2>
+
+    <p>
+        Predicting
+        <strong>
+            {{ gd.target }}
+        </strong>
+        from
+        <strong>
+            {{ gd.feature }}
+        </strong>
+        using gradient descent
+        (learning rate 0.001,
+        100 iterations,
+        {{ gd.samples }}
+        samples
+        ).
+    </p>
+
+    <div class="dataset-info">
+
+        <div class="info-box">
+
+            <h3>
+                {{ gd.theta0 }}
+            </h3>
+
+            <p>
+                Intercept (&theta;&#8320;)
+            </p>
+
+        </div>
+
+        <div class="info-box">
+
+            <h3>
+                {{ gd.theta1 }}
+            </h3>
+
+            <p>
+                Slope (&theta;&#8321;)
+            </p>
+
+        </div>
+
+        <div class="info-box">
+
+            <h3>
+                {{ gd.mse }}
+            </h3>
+
+            <p>
+                MSE
+            </p>
+
+        </div>
+
+        <div class="info-box">
+
+            <h3>
+                {{ gd.rsq }}
+            </h3>
+
+            <p>
+                R&sup2;
+            </p>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<div class="card">
+
+    <h2>
+        3. Simple Logistic Regression
+    </h2>
+
+    <p>
+        Classifying
+        <strong>
+            {{ logistic.target }}
+        </strong>
+        from a single feature
+        <strong>
+            {{ logistic.feature }}
+        </strong>
+        &mdash;
+        decision function:
+        y = {{ logistic.theta0 }} + ({{ logistic.theta1 }} &times; CGPA)
+    </p>
+
+    <div class="dataset-info">
+
+        <div class="info-box">
+
+            <h3>
+                {{ logistic.theta0 }}
+            </h3>
+
+            <p>
+                Intercept (&theta;&#8320;)
+            </p>
+
+        </div>
+
+        <div class="info-box">
+
+            <h3>
+                {{ logistic.theta1 }}
+            </h3>
+
+            <p>
+                Coefficient (&theta;&#8321;)
+            </p>
+
+        </div>
+
+        <div class="info-box">
+
+            <h3>
+                {{ logistic.accuracy }}
+            </h3>
+
+            <p>
+                Test Accuracy
+            </p>
+
+        </div>
+
+    </div>
+
+    <div class="info-box">
+
+        <table>
+
+            <thead>
+
+                <tr>
+
+                    <th>
+                        Train Samples
+                    </th>
+
+                    <th>
+                        Test Samples
+                    </th>
+
+                </tr>
+
+            </thead>
+
+            <tbody>
+
+                <tr>
+
+                    <td>
+                        {{ logistic.train_samples }}
+                    </td>
+
+                    <td>
+                        {{ logistic.test_samples }}
+                    </td>
+
+                </tr>
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+
+<div class="card">
+
+    <h2>
+        4. Built-in Linear Regression &mdash; Sample Data
+    </h2>
+
+    <p>
+        Built-in scikit-learn LinearRegression on sample data:
+        predicting
+        <strong>
+            {{ builtin_linear.y }}
+        </strong>
+        from
+        <strong>
+            {{ builtin_linear.x }}
+        </strong>.
+    </p>
+
+    <div class="dataset-info">
+
+        <div class="info-box">
+
+            <h3>
+                {{ builtin_linear.theta0 }}
+            </h3>
+
+            <p>
+                Intercept (&theta;&#8320;)
+            </p>
+
+        </div>
+
+        <div class="info-box">
+
+            <h3>
+                {{ builtin_linear.theta1 }}
+            </h3>
+
+            <p>
+                Slope (&theta;&#8321;)
+            </p>
+
+        </div>
+
+        <div class="info-box">
+
+            <h3>
+                {{ builtin_linear.mse }}
+            </h3>
+
+            <p>
+                MSE
+            </p>
+
+        </div>
+
+        <div class="info-box">
+
+            <h3>
+                {{ builtin_linear.rsq }}
+            </h3>
+
+            <p>
+                R&sup2;
+            </p>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<div class="card">
+
+    <h2>
+        5. Built-in Logistic Regression &mdash; Sample Data
+    </h2>
+
+    <p>
+        Built-in scikit-learn LogisticRegression on sample data:
+        classifying
+        <strong>
+            {{ builtin_logistic.y }}
+        </strong>
+        from
+        <strong>
+            {{ builtin_logistic.x }}
+        </strong>.
+    </p>
+
+    <div class="dataset-info">
+
+        <div class="info-box">
+
+            <h3>
+                {{ builtin_logistic.theta0 }}
+            </h3>
+
+            <p>
+                Intercept (&theta;&#8320;)
+            </p>
+
+        </div>
+
+        <div class="info-box">
+
+            <h3>
+                {{ builtin_logistic.theta1 }}
+            </h3>
+
+            <p>
+                Coefficient (&theta;&#8321;)
+            </p>
+
+        </div>
+
+        <div class="info-box">
+
+            <h3>
+                {{ builtin_logistic.accuracy }}
+            </h3>
+
+            <p>
+                Accuracy
+            </p>
+
+        </div>
+
+    </div>
+
+    <div class="info-box">
+
+        <table>
+
+            <thead>
+
+                <tr>
+
+                    <th>
+                        Predictions
+                    </th>
+
+                    <th>
+                        Actual Values
+                    </th>
+
+                </tr>
+
+            </thead>
+
+            <tbody>
+
+                <tr>
+
+                    <td>
+                        {{ builtin_logistic.predictions }}
+                    </td>
+
+                    <td>
+                        {{ builtin_logistic.actual }}
+                    </td>
+
+                </tr>
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+
+<div class="card">
+
+    <h2>
+        6. Regression Models
+    </h2>
+
+    <p>
+        Predicting
+        <strong>
+            {{ multi.target }}
+        </strong>
+        from
+        {{ multi.features|length }}
+        numeric features
+        (
+        {{ multi.samples }}
+        samples after dropping missing rows
+        ).
+    </p>
+
+    <div class="info-box">
+
+        <table>
+
+            <thead>
+
+                <tr>
+
+                    <th>
+                        Model
+                    </th>
+
+                    <th>
+                        R&sup2;
+                    </th>
+
+                    <th>
+                        RMSE
+                    </th>
+
+                    <th>
+                        MAE
+                    </th>
+
+                </tr>
+
+            </thead>
+
+            <tbody>
+
+                {% for item in multi.results %}
+
+                <tr>
+
+                    <td>
+                        {{ item.model }}
+                    </td>
+
+                    <td>
+                        {{ item.r2 }}
+                    </td>
+
+                    <td>
+                        {{ item.rmse }}
+                    </td>
+
+                    <td>
+                        {{ item.mae }}
+                    </td>
+
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+
+{% endblock %}

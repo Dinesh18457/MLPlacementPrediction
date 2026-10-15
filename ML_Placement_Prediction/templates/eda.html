@@ -1,0 +1,1839 @@
+{% extends "base.html" %}
+
+
+{% block title %}
+
+EDA - Placement Prediction
+
+{% endblock %}
+
+
+{% block content %}
+
+
+<div class="card">
+
+    <h2>
+        Exploratory Data Analysis
+    </h2>
+
+    <p>
+        Placement Prediction Dataset
+    </p>
+
+</div>
+
+
+{# =========================================================
+   Task 1 & 2: Load Data + Basic Info
+   ========================================================= #}
+
+
+<div class="card">
+
+    <h2>
+        1. Load Data & Basic Structure
+    </h2>
+
+    <div class="dataset-info">
+
+        <div class="info-box">
+
+            <h3>
+                {{ shape[0] }}
+            </h3>
+
+            <p>
+                Rows
+            </p>
+
+        </div>
+
+        <div class="info-box">
+
+            <h3>
+                {{ shape[1] }}
+            </h3>
+
+            <p>
+                Columns
+            </p>
+
+        </div>
+
+        <div class="info-box">
+
+            <h3>
+                {{ total_unique }}
+            </h3>
+
+            <p>
+                Unique Values
+            </p>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<div class="card">
+
+    <h2>
+        Dataset Preview
+    </h2>
+
+    <div class="info-box">
+
+        <table>
+
+            <thead>
+
+                <tr>
+
+                    {% for column in columns[:8] %}
+
+                    <th>
+                        {{ column }}
+                    </th>
+
+                    {% endfor %}
+
+                </tr>
+
+            </thead>
+
+            <tbody>
+
+                {% for row in preview[:5] %}
+
+                <tr>
+
+                    {% for column in columns[:8] %}
+
+                    <td>
+                        {{ row[column] }}
+                    </td>
+
+                    {% endfor %}
+
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+
+<div class="card">
+
+    <h2>
+        2. Numeric Descriptive Statistics
+    </h2>
+
+    <div class="info-box">
+
+        <table>
+
+            <thead>
+
+                <tr>
+
+                    <th>
+                        Statistic
+                    </th>
+
+                    {% for column in numeric_columns %}
+
+                    <th>
+                        {{ column }}
+                    </th>
+
+                    {% endfor %}
+
+                </tr>
+
+            </thead>
+
+            <tbody>
+
+                {% for stat in ["count", "mean", "std", "min", "25%", "50%", "75%", "max"] %}
+
+                <tr>
+
+                    <td>
+                        {{ stat }}
+                    </td>
+
+                    {% for column in numeric_columns %}
+
+                    <td>
+                        {{ numeric_describe[column][stat] }}
+                    </td>
+
+                    {% endfor %}
+
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+
+<div class="card">
+
+    <h2>
+        Categorical Columns Summary
+    </h2>
+
+    <div class="info-box">
+
+        <table>
+
+            <thead>
+
+                <tr>
+
+                    <th>
+                        Column
+                    </th>
+
+                    <th>
+                        Count
+                    </th>
+
+                    <th>
+                        Unique
+                    </th>
+
+                    <th>
+                        Top
+                    </th>
+
+                    <th>
+                        Freq
+                    </th>
+
+                </tr>
+
+            </thead>
+
+            <tbody>
+
+                {% for item in categorical_summary %}
+
+                <tr>
+
+                    <td>
+                        {{ item.column }}
+                    </td>
+
+                    <td>
+                        {{ item.count }}
+                    </td>
+
+                    <td>
+                        {{ item.unique }}
+                    </td>
+
+                    <td>
+                        {{ item.top }}
+                    </td>
+
+                    <td>
+                        {{ item.freq }}
+                    </td>
+
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+
+{# =========================================================
+   Task 3: Missing Values
+   ========================================================= #}
+
+
+<div class="card">
+
+    <h2>
+        3. Missing Values
+    </h2>
+
+    <div class="dataset-info">
+
+        <div class="info-box">
+
+            <h3>
+                {{ missing_before }}
+            </h3>
+
+            <p>
+                Before Median Fill
+            </p>
+
+        </div>
+
+        <div class="info-box">
+
+            <h3>
+                {{ missing_after }}
+            </h3>
+
+            <p>
+                After Median Fill
+            </p>
+
+        </div>
+
+        <div class="info-box">
+
+            <h3>
+                {{ knn.after }}
+            </h3>
+
+            <p>
+                After KNN Impute
+            </p>
+
+        </div>
+
+    </div>
+
+    <div class="info-box">
+
+        <table>
+
+            <thead>
+
+                <tr>
+
+                    <th>
+                        Column
+                    </th>
+
+                    <th>
+                        Type
+                    </th>
+
+                    <th>
+                        Missing Count
+                    </th>
+
+                    <th>
+                        Missing %
+                    </th>
+
+                </tr>
+
+            </thead>
+
+            <tbody>
+
+                {% for item in missing_values %}
+
+                <tr>
+
+                    <td>
+                        {{ item.column }}
+                    </td>
+
+                    <td>
+                        {{ item.type }}
+                    </td>
+
+                    <td>
+                        {{ item.count }}
+                    </td>
+
+                    <td>
+                        {{ item.percentage }}
+                    </td>
+
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+    <div class="chart-box">
+
+        <img src="{{ url_for('static', filename='plots/missing_heatmap.png') }}"
+             alt="Missing values heatmap">
+
+    </div>
+
+</div>
+
+
+{# =========================================================
+   Task 4: Duplicate Rows
+   ========================================================= #}
+
+
+<div class="card">
+
+    <h2>
+        4. Duplicate Rows
+    </h2>
+
+    <div class="dataset-info">
+
+        <div class="info-box">
+
+            <h3>
+                {{ duplicate_stats.count }}
+            </h3>
+
+            <p>
+                Duplicate Rows
+            </p>
+
+        </div>
+
+        <div class="info-box">
+
+            <h3>
+                {{ duplicate_stats.percentage }}
+            </h3>
+
+            <p>
+                Percentage
+            </p>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+{# =========================================================
+   Task 5: Target Variable Distribution
+   ========================================================= #}
+
+
+<div class="card">
+
+    <h2>
+        5. Target Variable Distribution
+    </h2>
+
+    <div class="dataset-info">
+
+        <div class="info-box">
+
+            <h3>
+                {{ placement_rate }}%
+            </h3>
+
+            <p>
+                Placement Rate
+            </p>
+
+        </div>
+
+        <div class="info-box">
+
+            <h3>
+                {{ duplicates }}
+            </h3>
+
+            <p>
+                Duplicate Records
+            </p>
+
+        </div>
+
+        <div class="info-box">
+
+            <h3>
+                {{ total_missing }}
+            </h3>
+
+            <p>
+                Total Missing Values
+            </p>
+
+        </div>
+
+    </div>
+
+    <div class="plot-grid">
+
+        <div class="plot-box">
+
+            <img src="{{ url_for('static', filename='plots/placement_distribution.png') }}"
+                 alt="Placement status distribution">
+
+            <p>
+                Placement Status Distribution
+            </p>
+
+        </div>
+
+        <div class="plot-box">
+
+            <img src="{{ url_for('static', filename='plots/cgpa_placement.png') }}"
+                 alt="CGPA by placement status">
+
+            <p>
+                CGPA by Placement Status
+            </p>
+
+        </div>
+
+        <div class="plot-box">
+
+            <img src="{{ url_for('static', filename='plots/gender_placement.png') }}"
+                 alt="Placement status by gender">
+
+            <p>
+                Gender vs Placement
+            </p>
+
+        </div>
+
+        <div class="plot-box">
+
+            <img src="{{ url_for('static', filename='plots/internships_placement.png') }}"
+                 alt="Placement rate by internships">
+
+            <p>
+                Internships vs Placement
+            </p>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+{# =========================================================
+   Task 6: Numeric Feature Distributions
+   ========================================================= #}
+
+
+<div class="card">
+
+    <h2>
+        6. Numeric Feature Distributions
+    </h2>
+
+    <div class="plot-grid">
+
+        <div class="plot-box">
+
+            <img src="{{ url_for('static', filename='plots/hist_CGPA.png') }}"
+                 alt="CGPA distribution">
+
+            <p>
+                CGPA
+            </p>
+
+        </div>
+
+        <div class="plot-box">
+
+            <img src="{{ url_for('static', filename='plots/hist_AttendancePercent.png') }}"
+                 alt="Attendance distribution">
+
+            <p>
+                Attendance
+            </p>
+
+        </div>
+
+        <div class="plot-box">
+
+            <img src="{{ url_for('static', filename='plots/hist_AptitudeTestScore.png') }}"
+                 alt="Aptitude score distribution">
+
+            <p>
+                Aptitude Test Score
+            </p>
+
+        </div>
+
+        <div class="plot-box">
+
+            <img src="{{ url_for('static', filename='plots/hist_CodingTestScore.png') }}"
+                 alt="Coding score distribution">
+
+            <p>
+                Coding Test Score
+            </p>
+
+        </div>
+
+        <div class="plot-box">
+
+            <img src="{{ url_for('static', filename='plots/hist_SoftSkillsRating.png') }}"
+                 alt="Soft skills distribution">
+
+            <p>
+                Soft Skills Rating
+            </p>
+
+        </div>
+
+        <div class="plot-box">
+
+            <img src="{{ url_for('static', filename='plots/hist_MockInterviewScore.png') }}"
+                 alt="Mock interview distribution">
+
+            <p>
+                Mock Interview Score
+            </p>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+{# =========================================================
+   Task 7: Outlier Detection
+   ========================================================= #}
+
+
+<div class="card">
+
+    <h2>
+        7. Outlier Detection (Boxplots)
+    </h2>
+
+    <div class="plot-grid">
+
+        <div class="plot-box">
+
+            <img src="{{ url_for('static', filename='plots/box_CGPA.png') }}"
+                 alt="CGPA boxplot">
+
+            <p>
+                CGPA
+            </p>
+
+        </div>
+
+        <div class="plot-box">
+
+            <img src="{{ url_for('static', filename='plots/box_AptitudeTestScore.png') }}"
+                 alt="Aptitude boxplot">
+
+            <p>
+                Aptitude Test Score
+            </p>
+
+        </div>
+
+        <div class="plot-box">
+
+            <img src="{{ url_for('static', filename='plots/box_CodingTestScore.png') }}"
+                 alt="Coding boxplot">
+
+            <p>
+                Coding Test Score
+            </p>
+
+        </div>
+
+        <div class="plot-box">
+
+            <img src="{{ url_for('static', filename='plots/box_MockInterviewScore.png') }}"
+                 alt="Mock interview boxplot">
+
+            <p>
+                Mock Interview Score
+            </p>
+
+        </div>
+
+        <div class="plot-box">
+
+            <img src="{{ url_for('static', filename='plots/box_Salary_Package.png') }}"
+                 alt="Salary package boxplot">
+
+            <p>
+                Salary Package
+            </p>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+{# =========================================================
+   Task 8: Correlation Analysis
+   ========================================================= #}
+
+
+<div class="card">
+
+    <h2>
+        8. Correlation Analysis
+    </h2>
+
+    <div class="chart-box">
+
+        <img src="{{ url_for('static', filename='plots/correlation_heatmap.png') }}"
+             alt="Correlation heatmap">
+
+    </div>
+
+    <div class="info-box">
+
+        <table>
+
+            <thead>
+
+                <tr>
+
+                    <th>
+                        Feature
+                    </th>
+
+                    <th>
+                        Correlation
+                    </th>
+
+                </tr>
+
+            </thead>
+
+            <tbody>
+
+                {% for item in correlations %}
+
+                <tr>
+
+                    <td>
+                        {{ item.feature }}
+                    </td>
+
+                    <td>
+                        {{ item.correlation }}
+                    </td>
+
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+
+{# =========================================================
+   Task 9: Relationship Plots
+   ========================================================= #}
+
+
+<div class="card">
+
+    <h2>
+        9. Relationship Plots
+    </h2>
+
+    <div class="plot-grid">
+
+        <div class="plot-box">
+
+            <img src="{{ url_for('static', filename='plots/scatter_cgpa_salary.png') }}"
+                 alt="CGPA vs salary package">
+
+            <p>
+                CGPA vs Salary Package
+            </p>
+
+        </div>
+
+        <div class="plot-box">
+
+            <img src="{{ url_for('static', filename='plots/scatter_aptitude_coding.png') }}"
+                 alt="Aptitude vs coding test score">
+
+            <p>
+                Aptitude vs Coding Score
+            </p>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+{# =========================================================
+   Task 10: Categorical Feature Counts
+   ========================================================= #}
+
+
+<div class="card">
+
+    <h2>
+        10. Categorical Feature Counts
+    </h2>
+
+    <div class="plot-grid">
+
+        <div class="plot-box">
+
+            <img src="{{ url_for('static', filename='plots/cat_Gender.png') }}"
+                 alt="Gender counts">
+
+            <p>
+                Gender
+            </p>
+
+        </div>
+
+        <div class="plot-box">
+
+            <img src="{{ url_for('static', filename='plots/cat_City.png') }}"
+                 alt="City counts">
+
+            <p>
+                City
+            </p>
+
+        </div>
+
+        <div class="plot-box">
+
+            <img src="{{ url_for('static', filename='plots/cat_CollegeTier.png') }}"
+                 alt="College tier counts">
+
+            <p>
+                College Tier
+            </p>
+
+        </div>
+
+        <div class="plot-box">
+
+            <img src="{{ url_for('static', filename='plots/cat_Stream.png') }}"
+                 alt="Stream counts">
+
+            <p>
+                Stream
+            </p>
+
+        </div>
+
+        <div class="plot-box">
+
+            <img src="{{ url_for('static', filename='plots/cat_Specialisation.png') }}"
+                 alt="Specialisation counts">
+
+            <p>
+                Specialisation
+            </p>
+
+        </div>
+
+        <div class="plot-box">
+
+            <img src="{{ url_for('static', filename='plots/cat_Hostel.png') }}"
+                 alt="Hostel counts">
+
+            <p>
+                Hostel
+            </p>
+
+        </div>
+
+        <div class="plot-box">
+
+            <img src="{{ url_for('static', filename='plots/cat_HistoryOfBacklogs.png') }}"
+                 alt="History of backlogs counts">
+
+            <p>
+                History of Backlogs
+            </p>
+
+        </div>
+
+        <div class="plot-box">
+
+            <img src="{{ url_for('static', filename='plots/cat_CGPA_Tier.png') }}"
+                 alt="CGPA tier counts">
+
+            <p>
+                CGPA Tier
+            </p>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+{# =========================================================
+   Task 11: Gender vs Placement Status
+   ========================================================= #}
+
+
+<div class="card">
+
+    <h2>
+        11. Gender vs Placement Status
+    </h2>
+
+    <div class="info-box">
+
+        <table>
+
+            <thead>
+
+                <tr>
+
+                    <th>
+                        Gender
+                    </th>
+
+                    <th>
+                        Placed
+                    </th>
+
+                    <th>
+                        Not Placed
+                    </th>
+
+                </tr>
+
+            </thead>
+
+            <tbody>
+
+                {% for item in gender_breakdown %}
+
+                <tr>
+
+                    <td>
+                        {{ item.Gender }}
+                    </td>
+
+                    <td>
+                        {{ item.Placed }}
+                    </td>
+
+                    <td>
+                        {{ item["Not Placed"] }}
+                    </td>
+
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+
+{# =========================================================
+   Task 12: College Tier / Stream vs Placement Status
+   ========================================================= #}
+
+
+<div class="card">
+
+    <h2>
+        12. College Tier / Stream vs Placement Status
+    </h2>
+
+    <div class="plot-grid">
+
+        <div class="plot-box">
+
+            <img src="{{ url_for('static', filename='plots/college_placement.png') }}"
+                 alt="Placement rate by college tier">
+
+            <p>
+                Placement Rate by College Tier
+            </p>
+
+        </div>
+
+        <div class="plot-box">
+
+            <img src="{{ url_for('static', filename='plots/stream_placement.png') }}"
+                 alt="Placement rate by stream">
+
+            <p>
+                Placement Rate by Stream
+            </p>
+
+        </div>
+
+    </div>
+
+    <div class="dataset-info">
+
+        <div class="info-box">
+
+            <table>
+
+                <thead>
+
+                    <tr>
+
+                        <th>
+                            College Tier
+                        </th>
+
+                        <th>
+                            Placed
+                        </th>
+
+                        <th>
+                            Not Placed
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                    {% for item in college_breakdown %}
+
+                    <tr>
+
+                        <td>
+                            {{ item.CollegeTier }}
+                        </td>
+
+                        <td>
+                            {{ item.Placed }}
+                        </td>
+
+                        <td>
+                            {{ item["Not Placed"] }}
+                        </td>
+
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+        <div class="info-box">
+
+            <table>
+
+                <thead>
+
+                    <tr>
+
+                        <th>
+                            Stream
+                        </th>
+
+                        <th>
+                            Placed
+                        </th>
+
+                        <th>
+                            Not Placed
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                    {% for item in stream_breakdown %}
+
+                    <tr>
+
+                        <td>
+                            {{ item.Stream }}
+                        </td>
+
+                        <td>
+                            {{ item.Placed }}
+                        </td>
+
+                        <td>
+                            {{ item["Not Placed"] }}
+                        </td>
+
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+{# =========================================================
+   Task 13: SGPA Trend Across Semesters
+   ========================================================= #}
+
+
+<div class="card">
+
+    <h2>
+        13. SGPA Trend Across Semesters
+    </h2>
+
+    <div class="chart-box">
+
+        <img src="{{ url_for('static', filename='plots/sgpa_trend.png') }}"
+             alt="SGPA trend across semesters">
+
+    </div>
+
+    <div class="info-box">
+
+        <table>
+
+            <thead>
+
+                <tr>
+
+                    <th>
+                        Semester
+                    </th>
+
+                    <th>
+                        Avg SGPA (Placed)
+                    </th>
+
+                    <th>
+                        Avg SGPA (Not Placed)
+                    </th>
+
+                </tr>
+
+            </thead>
+
+            <tbody>
+
+                {% for semester in sgpa_trend.semesters %}
+
+                <tr>
+
+                    <td>
+                        {{ semester }}
+                    </td>
+
+                    <td>
+                        {{ sgpa_trend.placed[loop.index0] }}
+                    </td>
+
+                    <td>
+                        {{ sgpa_trend.not_placed[loop.index0] }}
+                    </td>
+
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+
+{# =========================================================
+   Task 14: Salary Package Analysis
+   ========================================================= #}
+
+
+<div class="card">
+
+    <h2>
+        14. Salary Package Analysis
+    </h2>
+
+    <div class="dataset-info">
+
+        <div class="info-box">
+
+            <h3>
+                {{ salary_stats.count }}
+            </h3>
+
+            <p>
+                Placed Students
+            </p>
+
+        </div>
+
+        <div class="info-box">
+
+            <h3>
+                {{ salary_stats.mean }}
+            </h3>
+
+            <p>
+                Mean Salary
+            </p>
+
+        </div>
+
+        <div class="info-box">
+
+            <h3>
+                {{ salary_stats.median }}
+            </h3>
+
+            <p>
+                Median Salary
+            </p>
+
+        </div>
+
+        <div class="info-box">
+
+            <h3>
+                {{ salary_stats.minimum }}
+            </h3>
+
+            <p>
+                Min Salary
+            </p>
+
+        </div>
+
+        <div class="info-box">
+
+            <h3>
+                {{ salary_stats.maximum }}
+            </h3>
+
+            <p>
+                Max Salary
+            </p>
+
+        </div>
+
+    </div>
+
+    <div class="plot-grid">
+
+        <div class="plot-box">
+
+            <img src="{{ url_for('static', filename='plots/salary_distribution.png') }}"
+                 alt="Salary package distribution">
+
+            <p>
+                Salary Distribution
+            </p>
+
+        </div>
+
+        <div class="plot-box">
+
+            <img src="{{ url_for('static', filename='plots/salary_by_college.png') }}"
+                 alt="Salary package by college tier">
+
+            <p>
+                Salary by College Tier
+            </p>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+{# =========================================================
+   Task 15: Pairplot
+   ========================================================= #}
+
+
+<div class="card">
+
+    <h2>
+        15. Pairplot of Key Scores
+    </h2>
+
+    <div class="chart-box">
+
+        <img src="{{ url_for('static', filename='plots/pairplot.png') }}"
+             alt="Pairplot of key scores by placement status">
+
+    </div>
+
+    <p class="hint">
+        Pairwise relationships between CGPA, Aptitude Test Score,
+        Coding Test Score and Mock Interview Score, colored by
+        placement status.
+    </p>
+
+</div>
+
+
+{# =========================================================
+   Extra: CGPA statistics & t-test
+   ========================================================= #}
+
+
+<div class="card">
+
+    <h2>
+        CGPA Statistics
+    </h2>
+
+    <div class="dataset-info">
+
+        <div class="info-box">
+
+            <h3>
+                {{ cgpa.mean }}
+            </h3>
+
+            <p>
+                Mean
+            </p>
+
+        </div>
+
+        <div class="info-box">
+
+            <h3>
+                {{ cgpa.median }}
+            </h3>
+
+            <p>
+                Median
+            </p>
+
+        </div>
+
+        <div class="info-box">
+
+            <h3>
+                {{ cgpa.std }}
+            </h3>
+
+            <p>
+                Std Dev
+            </p>
+
+        </div>
+
+        <div class="info-box">
+
+            <h3>
+                {{ cgpa.q1 }}
+            </h3>
+
+            <p>
+                Q1
+            </p>
+
+        </div>
+
+        <div class="info-box">
+
+            <h3>
+                {{ cgpa.q3 }}
+            </h3>
+
+            <p>
+                Q3
+            </p>
+
+        </div>
+
+    </div>
+
+    <div class="info-box">
+
+        <table>
+
+            <thead>
+
+                <tr>
+
+                    <th>
+                        t-statistic
+                    </th>
+
+                    <th>
+                        p-value
+                    </th>
+
+                </tr>
+
+            </thead>
+
+            <tbody>
+
+                <tr>
+
+                    <td>
+                        {{ ttest.statistic }}
+                    </td>
+
+                    <td>
+                        {{ ttest.pvalue }}
+                    </td>
+
+                </tr>
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+
+<div class="card">
+
+    <h2>
+        Column Type Summary
+    </h2>
+
+    <div class="info-box">
+
+        <table>
+
+            <thead>
+
+                <tr>
+
+                    <th>
+                        Column
+                    </th>
+
+                    <th>
+                        Unique Count
+                    </th>
+
+                </tr>
+
+            </thead>
+
+            <tbody>
+
+                {% for item in unique_values %}
+
+                <tr>
+
+                    <td>
+                        {{ item.column }}
+                    </td>
+
+                    <td>
+                        {{ item.count }}
+                    </td>
+
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+
+{# =========================================================
+   Feature Engineering Methods
+   ========================================================= #}
+
+
+<div class="card">
+
+    <h2>
+        Feature Engineering
+    </h2>
+
+    <p>
+        KNN imputation, standardization, and regression models
+        applied to the Placement Prediction dataset.
+    </p>
+
+</div>
+
+
+<div class="card">
+
+    <h2>
+        1. KNN Imputation
+    </h2>
+
+    <p>
+        Missing values in numeric columns are imputed with
+        a K-Nearest Neighbours imputer
+        (K = {{ knn.n_neighbors }}).
+    </p>
+
+    <div class="dataset-info">
+
+        <div class="info-box">
+
+            <h3>
+                {{ knn.before }}
+            </h3>
+
+            <p>
+                Missing Values Before
+            </p>
+
+        </div>
+
+        <div class="info-box">
+
+            <h3>
+                {{ knn.after }}
+            </h3>
+
+            <p>
+                Missing Values After
+            </p>
+
+        </div>
+
+        <div class="info-box">
+
+            <h3>
+                {{ knn.columns|length }}
+            </h3>
+
+            <p>
+                Imputed Numeric Columns
+            </p>
+
+        </div>
+
+    </div>
+
+    <div class="info-box">
+
+        <div class="columns">
+
+            {% for column in knn.columns %}
+
+            <span class="column">
+
+                {{ column }}
+
+            </span>
+
+            {% endfor %}
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<div class="card">
+
+    <h2>
+        2. Standardized Features Preview (After Imputation)
+    </h2>
+
+    <p>
+        StandardScaler applied to the KNN-imputed data —
+        train / test split preview (first 5 rows).
+    </p>
+
+    <div class="info-box">
+
+        <h3>
+            Train Data
+        </h3>
+
+        <table>
+
+            <thead>
+
+                <tr>
+
+                    {% for column in std_columns %}
+
+                    <th>
+                        {{ column }}
+                    </th>
+
+                    {% endfor %}
+
+                </tr>
+
+            </thead>
+
+            <tbody>
+
+                {% for rows in std_train_rows %}
+
+                <tr>
+
+                    {% for element in rows %}
+
+                    <td>
+                        {{ element }}
+                    </td>
+
+                    {% endfor %}
+
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+    <div class="info-box">
+
+        <h3>
+            Test Data
+        </h3>
+
+        <table>
+
+            <thead>
+
+                <tr>
+
+                    {% for column in std_columns %}
+
+                    <th>
+                        {{ column }}
+                    </th>
+
+                    {% endfor %}
+
+                </tr>
+
+            </thead>
+
+            <tbody>
+
+                {% for rows in std_test_rows %}
+
+                <tr>
+
+                    {% for element in rows %}
+
+                    <td>
+                        {{ element }}
+                    </td>
+
+                    {% endfor %}
+
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+
+<div class="card">
+
+    <h2>
+        3. Regression Models
+    </h2>
+
+    <p>
+        Predicting
+        <strong>
+            {{ regression.target }}
+        </strong>
+        from
+        {{ regression.features|length }}
+        numeric features
+        (
+        {{ regression.samples }}
+        samples after dropping missing rows
+        ).
+    </p>
+
+    <div class="info-box">
+
+        <table>
+
+            <thead>
+
+                <tr>
+
+                    <th>
+                        Model
+                    </th>
+
+                    <th>
+                        R&sup2;
+                    </th>
+
+                    <th>
+                        RMSE
+                    </th>
+
+                    <th>
+                        MAE
+                    </th>
+
+                </tr>
+
+            </thead>
+
+            <tbody>
+
+                {% for item in regression.results %}
+
+                <tr>
+
+                    <td>
+                        {{ item.model }}
+                    </td>
+
+                    <td>
+                        {{ item.r2 }}
+                    </td>
+
+                    <td>
+                        {{ item.rmse }}
+                    </td>
+
+                    <td>
+                        {{ item.mae }}
+                    </td>
+
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+
+<div class="card">
+
+    <h2>
+        Linear Regression Coefficients
+    </h2>
+
+    <p>
+        Intercept:
+        <strong>
+            {{ regression.intercept }}
+        </strong>
+    </p>
+
+    <div class="info-box">
+
+        <table>
+
+            <thead>
+
+                <tr>
+
+                    <th>
+                        Feature
+                    </th>
+
+                    <th>
+                        Coefficient
+                    </th>
+
+                </tr>
+
+            </thead>
+
+            <tbody>
+
+                {% for item in regression.coefficients %}
+
+                <tr>
+
+                    <td>
+                        {{ item.feature }}
+                    </td>
+
+                    <td>
+                        {{ item.coefficient }}
+                    </td>
+
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+
+{% endblock %}

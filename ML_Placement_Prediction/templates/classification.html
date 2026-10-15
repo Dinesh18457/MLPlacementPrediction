@@ -1,0 +1,626 @@
+{% extends "base.html" %}
+
+{% block title %}
+ROC-AUC Demonstration
+{% endblock %}
+
+
+{% block content %}
+
+<div class="classification-page">
+
+    <!-- =====================================================
+         HEADER
+    ====================================================== -->
+
+    <div class="classification-header">
+
+        <div>
+
+            <h1>
+                ROC-AUC Demonstration
+            </h1>
+
+            <p>
+                Placement Prediction using Decision Tree Classification
+            </p>
+
+            <span>
+                Evaluate how well the model separates
+                Placed vs Not Placed students.
+            </span>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         STEP 1
+    ====================================================== -->
+
+    <section class="step-card">
+
+        <div class="step-number">
+            1
+        </div>
+
+        <div class="step-content">
+
+            <h2>
+                Dataset: Placement Prediction
+            </h2>
+
+            <p>
+                The placement dataset contains academic,
+                skill-test and activity-related features.
+            </p>
+
+            <div class="info-box">
+
+                <h3>
+                    Features Used
+                </h3>
+
+                <ul>
+
+                    {% for feature in dt_results.features %}
+
+                    <li>
+                        {{ feature }}
+                    </li>
+
+                    {% endfor %}
+
+                </ul>
+
+            </div>
+
+            <div class="info-box">
+
+                <h3>
+                    Target
+                </h3>
+
+                <p>
+                    PlacementStatus
+                </p>
+
+                <p>
+                    <strong>1 = Placed</strong>
+                    &nbsp;&nbsp;
+                    <strong>0 = Not Placed</strong>
+                </p>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         STEP 2
+    ====================================================== -->
+
+    <section class="step-card">
+
+        <div class="step-number">
+            2
+        </div>
+
+        <div class="step-content">
+
+            <h2>
+                Load & Prepare Data
+            </h2>
+
+            <p>
+                The dataset is cleaned and prepared before
+                training the classification model.
+            </p>
+
+            <div class="info-box">
+
+                <strong>
+                    Train / Test Split:
+                </strong>
+
+                {{ dt_results.split_ratio }}
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         STEP 3
+    ====================================================== -->
+
+    <section class="step-card">
+
+        <div class="step-number">
+            3
+        </div>
+
+        <div class="step-content">
+
+            <h2>
+                Train Decision Tree Classifier
+            </h2>
+
+            <p>
+                A Decision Tree classifier is trained using
+                the prepared placement dataset.
+            </p>
+
+            <div class="metric-box">
+
+                <span>
+                    Model Accuracy
+                </span>
+
+                <strong>
+                    {{ dt_results.accuracy }}%
+                </strong>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         STEP 4
+    ====================================================== -->
+
+    <section class="step-card">
+
+        <div class="step-number">
+            4
+        </div>
+
+        <div class="step-content">
+
+            <h2>
+                Model Evaluation
+            </h2>
+
+            <p>
+                The trained Decision Tree predicts whether
+                students are placed or not placed.
+            </p>
+
+            <div class="metrics-grid">
+
+                <div class="small-metric">
+
+                    <span>
+                        Accuracy
+                    </span>
+
+                    <strong>
+                        {{ dt_results.accuracy }}%
+                    </strong>
+
+                </div>
+
+
+                <div class="small-metric">
+
+                    <span>
+                        Precision
+                    </span>
+
+                    <strong>
+                        {{ dt_results.precision }}%
+                    </strong>
+
+                </div>
+
+
+                <div class="small-metric">
+
+                    <span>
+                        Recall
+                    </span>
+
+                    <strong>
+                        {{ dt_results.recall }}%
+                    </strong>
+
+                </div>
+
+
+                <div class="small-metric">
+
+                    <span>
+                        F1 Score
+                    </span>
+
+                    <strong>
+                        {{ dt_results.f1_score }}%
+                    </strong>
+
+                </div>
+
+
+                <div class="small-metric">
+
+                    <span>
+                        Specificity
+                    </span>
+
+                    <strong>
+                        {{ dt_results.specificity }}%
+                    </strong>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         STEP 5 + STEP 6
+    ====================================================== -->
+
+    <div class="two-column">
+
+
+        <!-- =================================================
+             STEP 5
+        ================================================== -->
+
+        <section class="step-card">
+
+            <div class="step-number">
+                5
+            </div>
+
+            <div class="step-content">
+
+                <h2>
+                    ROC Curve Visualization
+                </h2>
+
+                <p>
+                    The ROC curve shows the relationship between
+                    False Positive Rate and True Positive Rate
+                    at different classification thresholds.
+                </p>
+
+
+                {% if dt_results.roc_plot %}
+
+                    <div class="roc-image-container">
+
+                        <img
+                            src="{{ dt_results.roc_plot }}"
+                            alt="ROC Curve"
+                            class="roc-image"
+                        >
+
+                    </div>
+
+                {% else %}
+
+                    <div class="error-box">
+
+                        ROC curve image could not be loaded.
+
+                    </div>
+
+                {% endif %}
+
+
+                <div class="roc-value">
+
+                    <strong>
+                        ROC-AUC:
+                    </strong>
+
+                    {{ dt_results.roc_auc }}
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =================================================
+             STEP 6
+        ================================================== -->
+
+        <section class="step-card">
+
+            <div class="step-number">
+                6
+            </div>
+
+            <div class="step-content">
+
+                <h2>
+                    AUC Calculation & Interpretation
+                </h2>
+
+
+                <div class="auc-display">
+
+                    AUC = {{ dt_results.roc_auc }}
+
+                </div>
+
+
+                <p>
+                    AUC (Area Under the Curve) measures how well
+                    the model distinguishes between placed and
+                    not placed students.
+                </p>
+
+
+                <p>
+
+                    An AUC closer to
+                    <strong>1.0</strong>
+                    indicates stronger discrimination.
+
+                    An AUC around
+                    <strong>0.5</strong>
+                    indicates performance similar to random guessing.
+
+                </p>
+
+
+                <div class="result-box">
+
+                    <p>
+
+                        <strong>
+                            Model Accuracy:
+                        </strong>
+
+                        {{ dt_results.accuracy }}%
+
+                    </p>
+
+
+                    <p>
+
+                        <strong>
+                            Precision:
+                        </strong>
+
+                        {{ dt_results.precision }}%
+
+                    </p>
+
+
+                    <p>
+
+                        <strong>
+                            Recall:
+                        </strong>
+
+                        {{ dt_results.recall }}%
+
+                    </p>
+
+
+                    <p>
+
+                        <strong>
+                            F1 Score:
+                        </strong>
+
+                        {{ dt_results.f1_score }}%
+
+                    </p>
+
+
+                    <p>
+
+                        <strong>
+                            Specificity:
+                        </strong>
+
+                        {{ dt_results.specificity }}%
+
+                    </p>
+
+
+                    <p>
+
+                        <strong>
+                            ROC-AUC:
+                        </strong>
+
+                        {{ dt_results.roc_auc }}
+
+                    </p>
+
+
+                    <p>
+
+                        <strong>
+                            Interpretation:
+                        </strong>
+
+                        {{ dt_results.interpretation }}
+
+                    </p>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </div>
+
+
+    <!-- =====================================================
+         CLASSIFICATION REPORT
+    ====================================================== -->
+
+    <section class="report-section">
+
+        <h2>
+            📊 Classification Report
+        </h2>
+
+
+        <div class="report-table-container">
+
+            <table class="report-table">
+
+                <thead>
+
+                    <tr>
+
+                        <th>
+                            Class
+                        </th>
+
+                        <th>
+                            Precision
+                        </th>
+
+                        <th>
+                            Recall
+                        </th>
+
+                        <th>
+                            F1 Score
+                        </th>
+
+                        <th>
+                            Support
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody>
+
+                    <tr>
+
+                        <td>
+                            0 - Not Placed
+                        </td>
+
+                        <td>
+                            {{ (dt_results.report['0']['precision'] * 100)|round(2) }}%
+                        </td>
+
+                        <td>
+                            {{ (dt_results.report['0']['recall'] * 100)|round(2) }}%
+                        </td>
+
+                        <td>
+                            {{ (dt_results.report['0']['f1-score'] * 100)|round(2) }}%
+                        </td>
+
+                        <td>
+                            {{ dt_results.report['0']['support']|int }}
+                        </td>
+
+                    </tr>
+
+
+                    <tr>
+
+                        <td>
+                            1 - Placed
+                        </td>
+
+                        <td>
+                            {{ (dt_results.report['1']['precision'] * 100)|round(2) }}%
+                        </td>
+
+                        <td>
+                            {{ (dt_results.report['1']['recall'] * 100)|round(2) }}%
+                        </td>
+
+                        <td>
+                            {{ (dt_results.report['1']['f1-score'] * 100)|round(2) }}%
+                        </td>
+
+                        <td>
+                            {{ dt_results.report['1']['support']|int }}
+                        </td>
+
+                    </tr>
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         COMPLETE WORKFLOW
+    ====================================================== -->
+
+    <section class="workflow-section">
+
+        <h2>
+            📌 Complete Workflow
+        </h2>
+
+        <div class="workflow">
+
+            <div class="workflow-step">
+                <span>1</span>
+                Load and prepare the placement dataset.
+            </div>
+
+
+            <div class="workflow-step">
+                <span>2</span>
+                Split the dataset into training and testing data.
+            </div>
+
+
+            <div class="workflow-step">
+                <span>3</span>
+                Train the Decision Tree classifier.
+            </div>
+
+
+            <div class="workflow-step">
+                <span>4</span>
+                Generate classification predictions.
+            </div>
+
+
+            <div class="workflow-step">
+                <span>5</span>
+                Construct the ROC curve using probability scores.
+            </div>
+
+
+            <div class="workflow-step">
+                <span>6</span>
+                Calculate AUC and interpret model performance.
+            </div>
+
+        </div>
+
+    </section>
+
+</div>
+
+{% endblock %}
